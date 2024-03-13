@@ -28,21 +28,43 @@ class City:
     def buildLayout(self):
         if self.layoutType == City.ConcentricCircle:
             self.buildConcentricCircleLayout()
+        elif self.layoutType == City.Sector:
+            self.buildSectorLayout()
         else:
             self.buildConcentricCircleLayout()
 
     def buildConcentricCircleLayout(self):
         halfSize = self.citySize / 2
+        center = np.asarray([self.citySize / 2, self.citySize / 2])
         for i in range(self.citySize):
             self.layout.append([])
             for j in range(self.citySize):
-                dis = getDistance(np.asarray([i, j]), np.asarray([self.citySize / 2, self.citySize / 2]))
+                point = np.asarray([i, j])
+                dis = getDistance(point, center)
                 if dis < halfSize / 3:
                     self.layout[i].append(Building.CommercialBuilding(i, j))
                 elif halfSize / 3 <= dis < halfSize * 2 / 3:
                     self.layout[i].append(Building.ResidentialBuilding(i, j))
                 else:
                     self.layout[i].append(Building.IndustrialBuilding(i, j))
+
+    def buildSectorLayout(self):
+        halfSize = self.citySize / 2
+        axisX = np.asarray([1, 0])
+        for i in range(self.citySize):
+            self.layout.append([])
+            for j in range(self.citySize):
+                vec = np.asarray([i, j]) - np.asarray([halfSize, halfSize])
+                cos = vec.dot(axisX) / max(np.linalg.norm(vec), 0.1)
+                angle = np.arccos(cos)*180/np.pi
+                if (0 <= angle < 60 and j < halfSize) or (120 <= angle <= 180 and j >= halfSize):
+                    self.layout[i].append(Building.ResidentialBuilding(i, j))
+                elif 60 <= angle < 120:
+                    self.layout[i].append(Building.CommercialBuilding(i, j))
+                elif (0 <= angle < 60 and j >= halfSize) or (120 <= angle <= 180 and j < halfSize):
+                    self.layout[i].append(Building.IndustrialBuilding(i, j))
+                else:
+                    self.layout[i].append(Building.Building(i, j))
 
     def getW(self):
         wShot = np.zeros([self.citySize, self.citySize])
@@ -117,9 +139,12 @@ class City:
 
 
 if __name__ == "__main__":
-    city = City(City.ConcentricCircle)
-    city.show()
+    city1 = City(City.Sector)
+    city1.show()
 
-    w = city.getW()  # np.array
-    d = city.getD()  # np.array
+    city2 = City(City.ConcentricCircle)
+    city2.show()
+
+    w = city1.getW()  # np.array
+    d = city1.getD()  # np.array
 

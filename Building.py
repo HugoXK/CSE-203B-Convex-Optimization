@@ -2,8 +2,9 @@ import numpy as np
 
 
 class Building:
-    COMMERCIAL_BUILDING = 0
-    RESIDENTIAL_BUILDING = 1
+    BUILDING = -1
+    RESIDENTIAL_BUILDING = 0
+    COMMERCIAL_BUILDING = 1
     INDUSTRIAL_BUILDING = 2
 
     dijMax = 10000
@@ -13,6 +14,7 @@ class Building:
         self.y = y
         self.w = 0.0
         self.d = Building.dijMax
+        self.t = Building.BUILDING
 
     def getDistance(self, building):
         return np.linalg.norm(np.asarray([self.x, self.y]) - np.asarray([building.x, building.y]))
