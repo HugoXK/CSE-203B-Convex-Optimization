@@ -17,11 +17,12 @@ class City:
     CentralizedFF = 0
     DispersedFF = 1
 
-    def __init__(self, layoutType, citySize=100):
+    def __init__(self, layoutType, ffType=CentralizedFF, citySize=100):
         self.citySize = citySize
         self.layoutType = layoutType
         self.layout = []
         self.buildLayout()
+        self.ffType = ffType
         self.fireStations = []
         self.buildFireStations()
 
@@ -147,7 +148,14 @@ class City:
         plt.title('Layout Distribution')
 
     def buildFireStations(self):
-        self.fireStations.append([self.citySize/2, self.citySize/2])
+        halfSize = self.citySize/2
+        if self.ffType == City.CentralizedFF:
+            self.fireStations.append([halfSize, halfSize])
+        else:
+            self.fireStations.append([halfSize / 2, halfSize / 2])
+            self.fireStations.append([self.citySize - halfSize / 2, halfSize / 2])
+            self.fireStations.append([halfSize / 2, self.citySize - halfSize / 2])
+            self.fireStations.append([self.citySize - halfSize / 2, self.citySize - halfSize / 2])
         self.update()
 
     def update(self):
@@ -164,14 +172,23 @@ class City:
 
 
 if __name__ == "__main__":
-    # city1 = City(City.Sector)
-    # city1.show()
+    city1 = City(City.Sector)
+    city1.show()
 
-    # city2 = City(City.ConcentricCircle)
-    # city2.show()
+    city2 = City(City.ConcentricCircle)
+    city2.show()
 
-    # w = city1.getW()  # np.array
-    # d = city1.getD()  # np.array
     city3 = City(City.MultipleNucleus)
     city3.show()
 
+    city4 = City(City.Sector, City.DispersedFF)
+    city4.show()
+
+    city5 = City(City.ConcentricCircle, City.DispersedFF)
+    city5.show()
+
+    city6 = City(City.MultipleNucleus, City.DispersedFF)
+    city6.show()
+
+    # w = city1.getW()  # np.array
+    # d = city1.getD()  # np.array
