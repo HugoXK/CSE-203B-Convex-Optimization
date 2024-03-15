@@ -30,6 +30,8 @@ class City:
             self.buildConcentricCircleLayout()
         elif self.layoutType == City.Sector:
             self.buildSectorLayout()
+        elif self.layoutType == City.MultipleNucleus:
+            self.buildMultiNucleusLayout()
         else:
             self.buildConcentricCircleLayout()
 
@@ -65,6 +67,29 @@ class City:
                     self.layout[i].append(Building.IndustrialBuilding(i, j))
                 else:
                     self.layout[i].append(Building.Building(i, j))
+
+    def buildMultiNucleusLayout(self):
+        halfSize = self.citySize / 2
+        commercialCenter = np.asarray([[halfSize/2, halfSize/2],
+                                       [halfSize, halfSize],
+                                       [self.citySize - halfSize / 2, self.citySize - halfSize / 5]])
+        industrialCenter = np.asarray([[self.citySize - halfSize / 2, halfSize / 2],
+                                       [halfSize / 3, self.citySize - halfSize / 3],
+                                       [self.citySize - halfSize / 3, self.citySize - halfSize / 3]])
+        for i in range(self.citySize):
+            self.layout.append([])
+            for j in range(self.citySize):
+                point = np.asarray([i, j])
+                if getDistance(point, commercialCenter[0]) < 10 \
+                        or getDistance(point, commercialCenter[1]) < 20 \
+                        or getDistance(point, commercialCenter[2]) < 10:
+                    self.layout[i].append(Building.CommercialBuilding(i, j))
+                elif getDistance(point, industrialCenter[0]) < 10 \
+                        or getDistance(point, industrialCenter[1]) < 35 \
+                        or getDistance(point, industrialCenter[2]) < 15:
+                    self.layout[i].append(Building.IndustrialBuilding(i, j))
+                else:
+                    self.layout[i].append(Building.ResidentialBuilding(i, j))
 
     def getW(self):
         wShot = np.zeros([self.citySize, self.citySize])
@@ -139,12 +164,14 @@ class City:
 
 
 if __name__ == "__main__":
-    city1 = City(City.Sector)
-    city1.show()
+    # city1 = City(City.Sector)
+    # city1.show()
 
-    city2 = City(City.ConcentricCircle)
-    city2.show()
+    # city2 = City(City.ConcentricCircle)
+    # city2.show()
 
-    w = city1.getW()  # np.array
-    d = city1.getD()  # np.array
+    # w = city1.getW()  # np.array
+    # d = city1.getD()  # np.array
+    city3 = City(City.MultipleNucleus)
+    city3.show()
 
