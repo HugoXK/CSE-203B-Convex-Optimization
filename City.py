@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import pairwise_distances_argmin_min
 import Building
 
+np.random.seed(8888)
+
 
 def getDistance(vec1, vec2):
     return np.linalg.norm(vec1 - vec2)
